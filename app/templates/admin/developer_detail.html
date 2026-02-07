@@ -1,0 +1,237 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}Developer Details{% endblock %}
+{% block page_subtitle %}{{ user.full_name }}{% endblock %}
+
+{% block content %}
+<div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 space-y-6">
+        <!-- Basic Info -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Basic Information</h3>
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-slate-500">Full Name</label>
+                    <p class="font-medium">{{ user.full_name }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Email</label>
+                    <p class="font-medium">{{ user.email }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Phone</label>
+                    <p class="font-medium">{{ user.phone or 'Not provided' }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Status</label>
+                    <p>
+                        {% if user.status == 'verified' %}<span class="badge badge-success">Verified</span>
+                        {% elif user.status == 'pending' %}<span class="badge badge-warning">Pending</span>
+                        {% elif user.status == 'rejected' %}<span class="badge badge-danger">Rejected</span>
+                        {% elif user.status == 'suspended' %}<span class="badge badge-danger">Suspended</span>
+                        {% endif %}
+                    </p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Joined</label>
+                    <p class="font-medium">{{ user.created_at.strftime('%B %d, %Y') }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Last Login</label>
+                    <p class="font-medium">{{ user.last_login.strftime('%B %d, %Y') if user.last_login else 'Never' }}
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Info -->
+        {% if user.developer_profile %}
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Professional Profile</h3>
+
+            {% if user.developer_profile.tagline %}
+            <div class="mb-4">
+                <label class="text-sm text-slate-500">Tagline</label>
+                <p class="font-medium">{{ user.developer_profile.tagline }}</p>
+            </div>
+            {% endif %}
+
+            {% if user.developer_profile.bio %}
+            <div class="mb-4">
+                <label class="text-sm text-slate-500">Bio</label>
+                <p class="text-slate-700">{{ user.developer_profile.bio }}</p>
+            </div>
+            {% endif %}
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-slate-500">Experience</label>
+                    <p class="font-medium">{{ user.developer_profile.experience_years }} years</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Hourly Rate</label>
+                    <p class="font-medium">${{ user.developer_profile.hourly_rate or 'Not set' }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Availability</label>
+                    <p class="font-medium capitalize">{{ user.developer_profile.availability }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Articles</label>
+                    <p class="font-medium">{{ user.developer_profile.articles_count }}</p>
+                </div>
+            </div>
+
+            {% if user.developer_profile.get_skills_list() %}
+            <div class="mt-4">
+                <label class="text-sm text-slate-500 mb-2 block">Skills</label>
+                <div class="flex flex-wrap gap-2">
+                    {% for skill in user.developer_profile.get_skills_list() %}
+                    <span class="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            {% if user.developer_profile.get_domains_list() %}
+            <div class="mt-4">
+                <label class="text-sm text-slate-500 mb-2 block">Domains</label>
+                <div class="flex flex-wrap gap-2">
+                    {% for domain in user.developer_profile.get_domains_list() %}
+                    <span class="px-3 py-1 bg-cyan-100 text-cyan-700 rounded-full text-sm">{{ domain }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        <!-- KYC Documents -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">KYC Documents ({{ kyc_docs|length }})</h3>
+            {% if kyc_docs %}
+            <div class="space-y-3">
+                {% for doc in kyc_docs %}
+                <div class="flex items-center justify-between p-3 border rounded-lg">
+                    <div>
+                        <p class="font-medium">{{ doc.get_document_type_display() }}</p>
+                        <p class="text-sm text-slate-500">Submitted {{ doc.submitted_at.strftime('%b %d, %Y') }}</p>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="{{ doc.get_status_badge_class() }} badge">{{ doc.status|title }}</span>
+                        <a href="{{ url_for('admin.kyc_detail', kyc_id=doc.id) }}"
+                            class="text-primary-600 hover:underline text-sm">Review</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-slate-500 text-center py-4">No KYC documents submitted</p>
+            {% endif %}
+        </div>
+
+        <!-- Articles -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Published Articles ({{ articles|length }})</h3>
+            {% if articles %}
+            <div class="space-y-3">
+                {% for article in articles[:5] %}
+                <div class="flex items-start justify-between p-3 border rounded-lg">
+                    <div class="flex-1">
+                        <p class="font-medium">{{ article.title }}</p>
+                        <p class="text-sm text-slate-500">{{ article.created_at.strftime('%b %d, %Y') }} • {{
+                            article.views_count }} views</p>
+                    </div>
+                    <span class="{{ article.get_status_badge_class() }} badge">{{ article.status|title }}</span>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-slate-500 text-center py-4">No articles published</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Actions Sidebar -->
+    <div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border sticky top-6">
+            <h3 class="text-lg font-semibold mb-4">Actions</h3>
+
+            {% if user.status == 'pending' %}
+            <form method="POST" action="{{ url_for('admin.verify_developer', user_id=user.id) }}" class="mb-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="w-full btn-primary">Verify Developer</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('admin.reject_developer', user_id=user.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <textarea name="reason" placeholder="Rejection reason" class="form-input text-sm mb-2"
+                    rows="2"></textarea>
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">Reject</button>
+            </form>
+            {% elif user.status == 'verified' %}
+            <form method="POST" action="{{ url_for('admin.suspend_developer', user_id=user.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-orange-600 text-white rounded-lg font-medium hover:bg-orange-700"
+                    onclick="return confirm('Are you sure?')">Suspend Developer</button>
+            </form>
+            {% endif %}
+
+            <div class="mt-6 pt-6 border-t space-y-2">
+                {% if user.developer_profile %}
+                <a href="{{ url_for('main.developer_profile', developer_id=user.developer_profile.id) }}"
+                    class="block text-primary-600 hover:underline text-sm">→ View Public Profile</a>
+                {% endif %}
+                <a href="{{ url_for('admin.developers') }}" class="block text-slate-600 hover:underline text-sm">← Back
+                    to Developers</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

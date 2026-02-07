@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} | Asan DevNest</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        primary: { 50: '#eef2ff', 100: '#e0e7ff', 200: '#c7d2fe', 300: '#a5b4fc', 400: '#818cf8', 500: '#6366f1', 600: '#4f46e5', 700: '#4338ca', 800: '#3730a3', 900: '#312e81' },
+                        accent: { 400: '#22d3ee', 500: '#06b6d4', 600: '#0891b2' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Brand Animation Styles -->
+    <style>
+        .sidebar-brand-name {
+            background: linear-gradient(135deg, #4338ca 0%, #6366f1 25%, #d946ef 50%, #8b5cf6 75%, #4338ca 100%);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: sidebarBrandShimmer 6s linear infinite;
+            filter: drop-shadow(0 2px 4px rgba(99, 102, 241, 0.15));
+        }
+
+        @keyframes sidebarBrandShimmer {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            100% {
+                background-position: 300% 50%;
+            }
+        }
+
+        .sidebar-brand-container {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 0.75rem;
+            margin: -0.5rem;
+            border-radius: 1rem;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+
+        .sidebar-brand-container:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow:
+                0 10px 15px -3px rgba(0, 0, 0, 0.1),
+                0 4px 6px -2px rgba(0, 0, 0, 0.05),
+                0 0 0 2px rgba(99, 102, 241, 0.1);
+            transform: translateY(-2px);
+            border-color: rgba(99, 102, 241, 0.2);
+        }
+
+        .sidebar-logo {
+            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.4s ease;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .sidebar-brand-container:hover .sidebar-logo {
+            transform: rotate(-8deg) scale(1.15);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.2);
+        }
+    </style>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+
+<body class="font-sans bg-slate-100 antialiased">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-brand-container flex items-center mb-8 cursor-pointer">
+            <div class="sidebar-logo bg-white p-1.5 rounded-xl shadow-sm mr-3">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Asan DevNest" class="h-8 w-auto">
+            </div>
+            <div class="flex flex-col">
+                <span class="text-lg font-bold sidebar-brand-name">Asan Devnest</span>
+                <div class="text-slate-400 text-xs font-medium uppercase tracking-wider">{% block role_label
+                    %}Dashboard{% endblock %}</div>
+            </div>
+        </div>
+
+        <nav class="space-y-1">
+            {% block sidebar %}{% endblock %}
+        </nav>
+
+        <div class="absolute bottom-4 left-4 right-4">
+            <a href="{{ url_for('auth.logout') }}"
+                class="sidebar-link text-red-400 hover:text-red-300 hover:bg-red-500/10">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1">
+                    </path>
+                </svg>
+                <span>Logout</span>
+            </a>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard-content">
+        <!-- Top Bar -->
+        <header class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">{% block page_title %}Dashboard{% endblock %}</h1>
+                <p class="text-slate-500">{% block page_subtitle %}{% endblock %}</p>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="flex items-center gap-3">
+                    <img src="{{ current_user.get_avatar_url() }}" alt=""
+                        class="w-10 h-10 rounded-xl object-cover bg-slate-200">
+                    <div>
+                        <div class="font-medium text-slate-800">{{ current_user.full_name }}</div>
+                        <div class="text-sm text-slate-500">{{ current_user.email }}</div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Flash Messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="mb-6 space-y-2">
+            {% for category, message in messages %}
+            <div class="px-4 py-3 rounded-xl
+                            {% if category == 'success' %}bg-emerald-50 border border-emerald-200 text-emerald-800
+                            {% elif category == 'danger' or category == 'error' %}bg-red-50 border border-red-200 text-red-800
+                            {% elif category == 'warning' %}bg-amber-50 border border-amber-200 text-amber-800
+                            {% else %}bg-blue-50 border border-blue-200 text-blue-800{% endif %}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </main>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    {% block scripts %}{% endblock %}
+</body>
+
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}For Clients{% endblock %}
+{% block content %}
+<section class="hero-gradient py-20">
+    <div class="max-w-4xl mx-auto px-4 text-center text-white">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Build Your Vision with Confidence</h1>
+        <p class="text-xl text-white/80 mb-8">Get top Indian developers without freelancer risks. Asan handles
+            everything.</p>
+        <a href="{{ url_for('auth.register_client') }}"
+            class="inline-block px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold">Get Started</a>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Why Clients Choose Asan DevNest</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">No Freelancer Risks</h3>
+                <p class="text-slate-600">Asan takes full legal responsibility. We manage contracts, delivery, and
+                    ensure project completion.</p>
+            </div>
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">Verified Developers</h3>
+                <p class="text-slate-600">Every developer is KYC verified. You work with trusted professionals only.</p>
+            </div>
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">Competitive Pricing</h3>
+                <p class="text-slate-600">Access top Indian talent at rates significantly lower than Western agencies.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-16 bg-gradient-to-r from-primary-500 to-accent-500">
+    <div class="max-w-4xl mx-auto px-4 text-center text-white">
+        <h2 class="text-3xl font-bold mb-4">Ready to Start?</h2>
+        <p class="text-xl text-white/80 mb-8">Submit your project idea and we'll get back within 24 hours</p>
+        <a href="{{ url_for('auth.register_client') }}"
+            class="inline-block px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold">Submit Your Idea</a>
+    </div>
+</section>
+{% endblock %}

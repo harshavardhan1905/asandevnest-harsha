@@ -1,0 +1,200 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}KYC Document Review{% endblock %}
+{% block page_subtitle %}{{ kyc.user.full_name }} - {{ kyc.get_document_type_display() }}{% endblock %}
+
+{% block content %}
+<div class="grid md:grid-cols-3 gap-6">
+    <!-- Document Details -->
+    <div class="md:col-span-2">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border mb-6">
+            <h3 class="text-lg font-semibold mb-4">Document Information</h3>
+
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+                <div>
+                    <label class="text-sm text-slate-500">Developer</label>
+                    <p class="font-medium">{{ kyc.user.full_name }}</p>
+                    <p class="text-sm text-slate-600">{{ kyc.user.email }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Document Type</label>
+                    <p class="font-medium">{{ kyc.get_document_type_display() }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Submitted</label>
+                    <p class="font-medium">{{ kyc.submitted_at.strftime('%B %d, %Y at %I:%M %p') }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Status</label>
+                    <p><span class="{{ kyc.get_status_badge_class() }} badge">{{ kyc.status|title }}</span></p>
+                </div>
+            </div>
+
+            {% if kyc.full_name_on_document %}
+            <div class="mb-4">
+                <label class="text-sm text-slate-500">Name on Document</label>
+                <p class="font-medium">{{ kyc.full_name_on_document }}</p>
+            </div>
+            {% endif %}
+
+            {% if kyc.document_number %}
+            <div class="mb-4">
+                <label class="text-sm text-slate-500">Document Number</label>
+                <p class="font-medium font-mono">{{ kyc.document_number }}</p>
+            </div>
+            {% endif %}
+
+            {% if kyc.address %}
+            <div class="mb-4">
+                <label class="text-sm text-slate-500">Address</label>
+                <p class="font-medium">{{ kyc.address }}</p>
+            </div>
+            {% endif %}
+
+            <!-- Document Image -->
+            <div class="mt-6">
+                <label class="text-sm text-slate-500 mb-2 block">Document Scan</label>
+                <div class="border rounded-lg p-4 bg-slate-50">
+                    <img src="{{ kyc.get_document_url() }}" alt="KYC Document" class="max-w-full h-auto rounded">
+                </div>
+            </div>
+        </div>
+
+        <!-- Review Status -->
+        {% if kyc.status != 'pending' %}
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Review Information</h3>
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-slate-500">Reviewed By</label>
+                    <p class="font-medium">{{ kyc.reviewer.full_name if kyc.reviewer else 'N/A' }}</p>
+                </div>
+                <div>
+                    <label class="text-sm text-slate-500">Reviewed At</label>
+                    <p class="font-medium">{{ kyc.reviewed_at.strftime('%B %d, %Y') if kyc.reviewed_at else 'N/A' }}</p>
+                </div>
+            </div>
+
+            {% if kyc.rejection_reason %}
+            <div class="mt-4">
+                <label class="text-sm text-slate-500">Rejection Reason</label>
+                <p class="text-red-600 font-medium">{{ kyc.rejection_reason }}</p>
+            </div>
+            {% endif %}
+
+            {% if kyc.admin_notes %}
+            <div class="mt-4">
+                <label class="text-sm text-slate-500">Admin Notes</label>
+                <p class="text-slate-700">{{ kyc.admin_notes }}</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Actions -->
+    <div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border sticky top-6">
+            <h3 class="text-lg font-semibold mb-4">Actions</h3>
+
+            {% if kyc.status == 'pending' %}
+            <!-- Approve Form -->
+            <form method="POST" action="{{ url_for('admin.approve_kyc', kyc_id=kyc.id) }}" class="mb-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">Admin Notes (Optional)</label>
+                    <textarea name="notes" rows="3" class="form-input text-sm"
+                        placeholder="Internal notes..."></textarea>
+                </div>
+                <button type="submit" class="w-full btn-primary">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                    </svg>
+                    Approve Document
+                </button>
+            </form>
+
+            <!-- Reject Form -->
+            <form method="POST" action="{{ url_for('admin.reject_kyc', kyc_id=kyc.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">Rejection Reason *</label>
+                    <textarea name="reason" rows="3" required class="form-input text-sm"
+                        placeholder="Why is this being rejected?"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label class="block text-sm font-medium mb-2">Admin Notes (Optional)</label>
+                    <textarea name="notes" rows="2" class="form-input text-sm"
+                        placeholder="Internal notes..."></textarea>
+                </div>
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">
+                    <svg class="w-4 h-4 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12">
+                        </path>
+                    </svg>
+                    Reject Document
+                </button>
+            </form>
+            {% else %}
+            <div class="text-center py-4">
+                <p class="text-slate-500 mb-4">This document has been {{ kyc.status }}</p>
+                <a href="{{ url_for('admin.kyc_list') }}" class="btn-secondary">Back to List</a>
+            </div>
+            {% endif %}
+
+            <div class="mt-6 pt-6 border-t">
+                <a href="{{ url_for('admin.developer_detail', user_id=kyc.user_id) }}"
+                    class="text-primary-600 hover:underline text-sm">
+                    → View Developer Profile
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

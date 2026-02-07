@@ -1,0 +1,267 @@
+{% extends "base.html" %}
+
+{% block title %}Community{% endblock %}
+
+{% block content %}
+<!-- Hero -->
+<section class="bg-gradient-to-br from-slate-900 to-slate-800 py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-white mb-4">Developer Community</h1>
+        <p class="text-xl text-slate-300 max-w-2xl mx-auto mb-8">
+            Discover real projects, case studies, and insights from verified developers
+        </p>
+
+        <!-- Search -->
+        <div class="max-w-2xl mx-auto">
+            <form action="{{ url_for('articles.community') }}" method="GET" class="relative">
+                <input type="text" name="search" value="{{ search }}"
+                    placeholder="Search articles, technologies, topics..."
+                    class="w-full px-6 py-4 rounded-xl bg-white/10 backdrop-blur border border-white/20 text-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-primary-500">
+                <button type="submit" class="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Trust Banner -->
+<div class="bg-primary-600 text-white py-3">
+    <div class="max-w-7xl mx-auto px-4 text-center text-sm">
+        <strong>Build with Asan:</strong> Every article is from a <strong>verified developer</strong>. Like what you
+        see? Let us form your perfect team.
+    </div>
+</div>
+
+<!-- Filters & Content -->
+<section class="py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col lg:flex-row gap-8">
+            <!-- Sidebar Filters -->
+            <aside class="lg:w-64 flex-shrink-0">
+                <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 sticky top-24">
+                    <h3 class="font-semibold mb-4">Filters</h3>
+
+                    <form action="{{ url_for('articles.community') }}" method="GET">
+                        {% if search %}<input type="hidden" name="search" value="{{ search }}">{% endif %}
+
+                        <!-- Technology -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Technology</label>
+                            <select name="technology" class="form-input text-sm" onchange="this.form.submit()">
+                                <option value="">All Technologies</option>
+                                {% for tech in all_technologies %}
+                                <option value="{{ tech }}" {% if current_technology==tech %}selected{% endif %}>{{ tech
+                                    }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Domain -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Domain</label>
+                            <select name="domain" class="form-input text-sm" onchange="this.form.submit()">
+                                <option value="">All Domains</option>
+                                {% for domain in all_domains %}
+                                <option value="{{ domain }}" {% if current_domain==domain %}selected{% endif %}>{{
+                                    domain }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Article Type -->
+                        <div class="mb-6">
+                            <label class="block text-sm font-medium text-slate-700 mb-2">Type</label>
+                            <select name="type" class="form-input text-sm" onchange="this.form.submit()">
+                                <option value="">All Types</option>
+                                {% for value, label in article_types %}
+                                <option value="{{ value }}" {% if current_type==value %}selected{% endif %}>{{ label }}
+                                </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <a href="{{ url_for('articles.community') }}"
+                            class="block text-center text-primary-600 text-sm hover:underline">
+                            Clear Filters
+                        </a>
+                    </form>
+                </div>
+            </aside>
+
+            <!-- Articles Grid -->
+            <div class="flex-1">
+                {% if featured and not search and not current_technology and not current_domain %}
+                <!-- Featured Section -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6">Featured Articles</h2>
+                    <div class="grid md:grid-cols-3 gap-6">
+                        {% for article in featured %}
+                        <article class="article-card">
+                            <img src="{{ article.get_cover_url() }}" alt="" class="w-full h-40 object-cover">
+                            <div class="p-5">
+                                <span class="badge badge-purple mb-2">{{ article.article_type|replace('_', ' ')|title
+                                    }}</span>
+                                <h3 class="font-semibold mb-2 line-clamp-2">{{ article.title }}</h3>
+                                <div class="flex items-center gap-2 text-sm text-slate-500">
+                                    <span>{{ article.views_count }} views</span>
+                                    <span>·</span>
+                                    <span>{{ article.get_reading_time() }} min</span>
+                                </div>
+                            </div>
+                        </article>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- All Articles -->
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold">
+                        {% if search %}Search Results{% else %}All Articles{% endif %}
+                    </h2>
+                    <span class="text-slate-500">{{ articles.total }} articles</span>
+                </div>
+
+                {% if articles.items %}
+                <div class="grid md:grid-cols-2 gap-6">
+                    {% for article in articles.items %}
+                    <article class="article-card">
+                        <img src="{{ article.get_cover_url() }}" alt="" class="w-full h-48 object-cover">
+                        <div class="p-6">
+                            <div class="flex items-center gap-2 mb-3">
+                                <span class="badge badge-purple">{{ article.article_type|replace('_', ' ')|title
+                                    }}</span>
+                                {% if article.domain %}
+                                <span class="badge badge-info">{{ article.domain }}</span>
+                                {% endif %}
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2 line-clamp-2">{{ article.title }}</h3>
+                            <p class="text-slate-600 text-sm mb-4 line-clamp-2">{{ article.excerpt }}</p>
+
+                            <!-- Technologies -->
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                {% for tech in article.get_technologies_list()[:3] %}
+                                <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">{{ tech }}</span>
+                                {% endfor %}
+                            </div>
+
+                            <!-- Author & CTA -->
+                            <div class="flex items-center justify-between pt-4 border-t">
+                                <div class="flex items-center gap-2">
+                                    <img src="{{ article.developer.user.get_avatar_url() }}" class="w-8 h-8 rounded-lg">
+                                    <div>
+                                        <div class="text-sm font-medium">{{ article.developer.user.full_name }}</div>
+                                        <div class="verified-badge text-xs">Verified</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <button data-title="{{ article.title }}"
+                                        data-url="{{ url_for('articles.article_detail', slug=article.slug, _external=True) }}"
+                                        onclick="shareArticle(this)"
+                                        class="text-slate-400 hover:text-primary-600 transition p-1"
+                                        title="Share Article">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z">
+                                            </path>
+                                        </svg>
+                                    </button>
+                                    <a href="{{ url_for('articles.article_detail', slug=article.slug) }}"
+                                        class="text-primary-600 font-medium hover:underline">Read →</a>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+                    {% endfor %}
+                </div>
+
+                <!-- Pagination -->
+                {% if articles.pages > 1 %}
+                <div class="pagination mt-8">
+                    {% if articles.has_prev %}
+                    <a
+                        href="{{ url_for('articles.community', page=articles.prev_num, search=search, technology=current_technology, domain=current_domain, type=current_type) }}">←</a>
+                    {% endif %}
+                    {% for page in articles.iter_pages() %}
+                    {% if page %}
+                    {% if page == articles.page %}
+                    <span class="current">{{ page }}</span>
+                    {% else %}
+                    <a
+                        href="{{ url_for('articles.community', page=page, search=search, technology=current_technology, domain=current_domain, type=current_type) }}">{{
+                        page }}</a>
+                    {% endif %}
+                    {% else %}
+                    <span>...</span>
+                    {% endif %}
+                    {% endfor %}
+                    {% if articles.has_next %}
+                    <a
+                        href="{{ url_for('articles.community', page=articles.next_num, search=search, technology=current_technology, domain=current_domain, type=current_type) }}">→</a>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                {% else %}
+                <div class="text-center py-16 bg-white rounded-2xl border">
+                    <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                        </path>
+                    </svg>
+                    <h3 class="text-xl font-semibold mb-2">No articles found</h3>
+                    <p class="text-slate-500">Try adjusting your filters or search terms</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="py-16 bg-gradient-to-r from-primary-500 to-accent-500">
+    <div class="max-w-4xl mx-auto px-4 text-center text-white">
+        <h2 class="text-3xl font-bold mb-4">Ready to Build Your Project?</h2>
+        <p class="text-xl text-white/80 mb-8">Let Asan form the perfect team from our verified developers</p>
+        <a href="{{ url_for('auth.register_client') }}"
+            class="inline-block px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold hover:bg-white/90 transition">
+            Submit Your Idea
+        </a>
+    </div>
+</section>
+
+<script>
+    function shareArticle(btn) {
+        const title = btn.getAttribute('data-title');
+        const url = btn.getAttribute('data-url');
+
+        if (navigator.share) {
+            navigator.share({
+                title: title,
+                url: url
+            }).catch(err => {
+                console.log('Error sharing:', err);
+            });
+        } else {
+            // Fallback: Copy to clipboard
+            navigator.clipboard.writeText(url).then(() => {
+                // Show feedback
+                const originalHTML = btn.innerHTML;
+                btn.innerHTML = '<svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>';
+                setTimeout(() => {
+                    btn.innerHTML = originalHTML;
+                }, 2000);
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                prompt("Copy link:", url);
+            });
+        }
+    }
+</script>
+{% endblock %}

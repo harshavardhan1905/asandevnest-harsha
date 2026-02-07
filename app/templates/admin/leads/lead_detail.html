@@ -1,0 +1,209 @@
+{% extends "dashboard_base.html" %}
+
+{% block role_label %}Admin Panel{% endblock %}
+
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg>
+    <span>Core Admin</span>
+</a>
+
+<div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads & Projects</div>
+
+<a href="{{ url_for('admin_leads.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+    </svg>
+    <span>Lead Dashboard</span>
+</a>
+
+<a href="{{ url_for('admin_leads.lead_list') }}" class="sidebar-link active">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+        </path>
+    </svg>
+    <span>Manage Leads</span>
+</a>
+{% endblock %}
+
+{% block page_title %}Lead Details{% endblock %}
+{% block page_subtitle %}Inquiry timeline and follow-ups{% endblock %}
+
+{% block content %}
+<div class="grid lg:grid-cols-3 gap-8">
+    <!-- Lead Info -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="font-semibold text-lg">Student Profile</h3>
+                <span
+                    class="badge {% if lead.status == 'New Lead' %}badge-info{% elif lead.status == 'Confirmed' %}badge-success{% else %}badge-warning{% endif %}">
+                    {{ lead.status }}
+                </span>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs text-slate-400 block">Full Name</label>
+                    <div class="font-medium text-slate-800">{{ lead.student_name }}</div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block">Phone</label>
+                    <div class="font-medium text-slate-800">{{ lead.phone }}</div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block">Email</label>
+                    <div class="font-medium text-slate-800">{{ lead.email or 'N/A' }}</div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block">College</label>
+                    <div class="font-medium text-slate-800">{{ lead.college or 'N/A' }}</div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block">Domain</label>
+                    <div class="font-medium text-primary-600">{{ lead.domain }}</div>
+                </div>
+                <div>
+                    <label class="text-xs text-slate-400 block">Source</label>
+                    <div class="text-slate-600">{{ lead.source }}</div>
+                </div>
+            </div>
+
+            {% if lead.status != 'Confirmed' %}
+            <div class="mt-8 pt-6 border-t border-slate-100">
+                <a href="{{ url_for('admin_leads.confirm_project', lead_id=lead.id) }}"
+                    class="btn btn-primary w-full shadow-lg shadow-primary-500/30">
+                    Confirm Project →
+                </a>
+            </div>
+            {% else %}
+            <div class="mt-8 pt-6 border-t border-slate-100 text-center">
+                <div class="mb-3 flex items-center justify-center gap-2 text-emerald-600 font-bold text-sm">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Converted to Project
+                </div>
+                <a href="{{ url_for('admin_leads.project_detail', project_id=lead.confirmed_project.id) }}"
+                    class="btn btn-primary w-full shadow-lg shadow-primary-500/20 group">
+                    <span class="group-hover:translate-x-1 transition-transform inline-block">View Project →</span>
+                </a>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="font-semibold text-lg mb-4">Initial Requirements</h3>
+            <p class="text-slate-600 text-sm leading-relaxed italic border-l-4 border-slate-200 pl-4 py-1">
+                {{ lead.requirement_summary or 'No summary provided.' }}
+            </p>
+        </div>
+    </div>
+
+    <!-- Timeline & Follow-up -->
+    <div class="lg:col-span-2 space-y-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="font-semibold text-lg mb-6">Interaction Timeline</h3>
+
+            <div
+                class="relative pl-8 space-y-8 before:content-[''] before:absolute before:left-3 before:top-2 before:bottom-2 before:w-0.5 before:bg-slate-100">
+                {% for follow in lead.follow_ups|sort(attribute='created_at', reverse=True) %}
+                <div class="relative">
+                    <div
+                        class="absolute -left-8 top-1.5 w-6 h-6 rounded-full border-4 border-white bg-primary-500 shadow-sm">
+                    </div>
+                    <div class="mb-1 flex items-center justify-between">
+                        <div class="flex flex-col">
+                            <span class="text-xs font-semibold text-slate-400">{{ follow.created_at.strftime('%b %d, %Y
+                                - %I:%M %p') }}</span>
+                            <span class="text-[10px] font-bold text-slate-500 uppercase tracking-wider mt-0.5">
+                                by {{ follow.user.full_name if follow.user else 'Admin' }}
+                            </span>
+                        </div>
+                        <span
+                            class="badge badge-xs {% if follow.status_at_time == 'Interested' %}badge-success{% else %}badge-slate{% endif %}">{{
+                            follow.status_at_time }}</span>
+                    </div>
+                    <div class="p-4 rounded-xl bg-slate-50 border border-slate-100 text-sm text-slate-700">
+                        {{ follow.interaction_notes }}
+                        {% if follow.callback_datetime %}
+                        <div class="mt-3 flex items-center gap-2 text-primary-600 font-medium text-xs">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Callback scheduled: {{ follow.callback_datetime.strftime('%b %d, %I:%M %p') }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="text-center py-8 text-slate-400 italic">No interaction history yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+
+        {% if lead.status != 'Confirmed' %}
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+            <h3 class="font-semibold text-lg mb-6">Add Interaction / Update Status</h3>
+            <form action="{{ url_for('admin_leads.add_follow_up', lead_id=lead.id) }}" method="POST" class="space-y-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="space-y-1">
+                        <label class="text-sm text-slate-500">Interacted By</label>
+                        <select name="interacted_by_id"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                            {% for admin in admins %}
+                            <option value="{{ admin.id }}" {% if admin.id==current_user.id %}selected{% endif %}>{{
+                                admin.full_name }} {% if admin.id == current_user.id %}(Me){% endif %}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm text-slate-500">Update Lead Status</label>
+                        <select name="status"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                            <option value="New Lead" {% if lead.status=='New Lead' %}selected{% endif %}>New Lead
+                            </option>
+                            <option value="Follow-up" {% if lead.status=='Follow-up' %}selected{% endif %}>Follow-up
+                            </option>
+                            <option value="Interested" {% if lead.status=='Interested' %}selected{% endif %}>Interested
+                            </option>
+                            <option value="Dropped" {% if lead.status=='Dropped' %}selected{% endif %}>Dropped</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-sm text-slate-500">Next Callback (Optional)</label>
+                        <div class="flex gap-2">
+                            <input type="date" name="callback_date"
+                                class="w-1/2 px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none">
+                            <input type="time" name="callback_time"
+                                class="w-1/2 px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm text-slate-500">Interaction Notes</label>
+                    <textarea name="notes" rows="3" required
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                        placeholder="What was discussed in this call?"></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Interaction</button>
+            </form>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

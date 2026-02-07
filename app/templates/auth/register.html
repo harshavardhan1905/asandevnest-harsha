@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center py-12 px-4">
+    <div class="max-w-md w-full">
+        <!-- Logo -->
+        <div class="text-center mb-8">
+            <a href="{{ url_for('main.index') }}" class="inline-flex items-center space-x-2">
+                <div
+                    class="w-12 h-12 bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl flex items-center justify-center">
+                    <span class="text-white font-bold text-2xl">A</span>
+                </div>
+                <span class="text-2xl font-bold gradient-text">Asan DevNest</span>
+            </a>
+        </div>
+
+        <!-- Register Card -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-slate-200">
+            <h1 class="text-2xl font-bold text-center mb-2">Create Account</h1>
+            <p class="text-slate-600 text-center mb-8">Join the trusted developer platform</p>
+
+            <form method="POST" action="{{ url_for('auth.register') }}" data-validate>
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <!-- Role Selection -->
+                <div class="mb-6">
+                    <label class="block text-sm font-medium text-slate-700 mb-3">I want to join as</label>
+                    <div class="grid grid-cols-2 gap-4">
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="role" value="client" class="peer sr-only" {% if role=='client' or
+                                not role %}checked{% endif %}>
+                            <div
+                                class="p-4 border-2 border-slate-200 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 transition">
+                                <div
+                                    class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2 peer-checked:bg-primary-100">
+                                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                        </path>
+                                    </svg>
+                                </div>
+                                <div class="font-medium">Client</div>
+                                <div class="text-xs text-slate-500">Hire developers</div>
+                            </div>
+                        </label>
+                        <label class="relative cursor-pointer">
+                            <input type="radio" name="role" value="developer" class="peer sr-only" {% if
+                                role=='developer' %}checked{% endif %}>
+                            <div
+                                class="p-4 border-2 border-slate-200 rounded-xl text-center peer-checked:border-primary-500 peer-checked:bg-primary-50 transition">
+                                <div
+                                    class="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center mx-auto mb-2 peer-checked:bg-primary-100">
+                                    <svg class="w-5 h-5 text-slate-600" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                    </svg>
+                                </div>
+                                <div class="font-medium">Developer</div>
+                                <div class="text-xs text-slate-500">Offer services</div>
+                            </div>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-4">
+                    <label for="full_name" class="block text-sm font-medium text-slate-700 mb-2">Full Name</label>
+                    <input type="text" id="full_name" name="full_name" required
+                        value="{{ full_name if full_name else '' }}" class="form-input" placeholder="John Doe">
+                </div>
+
+                <div class="mb-4">
+                    <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
+                    <input type="email" id="email" name="email" required value="{{ email if email else '' }}"
+                        class="form-input" placeholder="you@example.com">
+                </div>
+
+                <div class="mb-4">
+                    <label for="phone" class="block text-sm font-medium text-slate-700 mb-2">Phone Number</label>
+                    <input type="tel" id="phone" name="phone" value="{{ phone if phone else '' }}" class="form-input"
+                        placeholder="+91 98765 43210">
+                </div>
+
+                <!-- Company name for clients -->
+                <div class="mb-4" id="company-field" style="display: none;">
+                    <label for="company_name" class="block text-sm font-medium text-slate-700 mb-2">Company Name</label>
+                    <input type="text" id="company_name" name="company_name" class="form-input"
+                        placeholder="Your Company">
+                </div>
+
+                <div class="mb-4">
+                    <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+                    <input type="password" id="password" name="password" required class="form-input"
+                        placeholder="••••••••">
+                    <p class="text-xs text-slate-500 mt-1">At least 8 characters with uppercase, lowercase, and numbers
+                    </p>
+                </div>
+
+                <div class="mb-6">
+                    <label for="confirm_password" class="block text-sm font-medium text-slate-700 mb-2">Confirm
+                        Password</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required class="form-input"
+                        placeholder="••••••••">
+                </div>
+
+                <div class="mb-6">
+                    <label class="flex items-start">
+                        <input type="checkbox" required
+                            class="w-4 h-4 mt-0.5 text-primary-600 border-slate-300 rounded focus:ring-primary-500">
+                        <span class="ml-2 text-sm text-slate-600">
+                            I agree to the <a href="{{ url_for('main.terms') }}"
+                                class="text-primary-600 hover:underline">Terms of Service</a>
+                            and <a href="{{ url_for('main.privacy') }}" class="text-primary-600 hover:underline">Privacy
+                                Policy</a>
+                        </span>
+                    </label>
+                </div>
+
+                <button type="submit" class="w-full btn-primary py-3 text-lg">
+                    Create Account
+                </button>
+            </form>
+
+            <div class="mt-6 text-center">
+                <span class="text-slate-600">Already have an account?</span>
+                <a href="{{ url_for('auth.login') }}"
+                    class="text-primary-600 font-medium hover:text-primary-700 ml-1">Sign in</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const roleInputs = document.querySelectorAll('input[name="role"]');
+        const companyField = document.getElementById('company-field');
+
+        function toggleCompanyField() {
+            const selectedRole = document.querySelector('input[name="role"]:checked').value;
+            companyField.style.display = selectedRole === 'client' ? 'block' : 'none';
+        }
+
+        roleInputs.forEach(input => {
+            input.addEventListener('change', toggleCompanyField);
+        });
+
+        toggleCompanyField();
+    });
+</script>
+{% endblock %}
+
+{% block footer %}{% endblock %}

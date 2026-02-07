@@ -1,0 +1,168 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}Create Development Team{% endblock %}
+{% block page_subtitle %}Assign developers to a client project{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <div class="bg-white rounded-2xl p-8 shadow-sm border">
+        <form method="POST" action="{{ url_for('admin.create_team') }}">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Team Name -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Team Name *</label>
+                <input type="text" name="name" required class="form-input"
+                    placeholder="e.g., Alpha Team, Project Phoenix Team">
+                <p class="text-sm text-slate-500 mt-1">Give this team a memorable name</p>
+            </div>
+
+            <!-- Description -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Description</label>
+                <textarea name="description" rows="3" class="form-input"
+                    placeholder="Brief description of the team's purpose..."></textarea>
+            </div>
+
+            <!-- Project Selection -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Assign to Project (Optional)</label>
+                <select name="project_id" class="form-input">
+                    <option value="">-- No Project (General Team) --</option>
+                    {% for project in available_projects %}
+                    <option value="{{ project.id }}">
+                        {{ project.title }} - {{ project.client.user.full_name }} ({{ project.get_budget_display() }})
+                    </option>
+                    {% endfor %}
+                </select>
+                <p class="text-sm text-slate-500 mt-1">
+                    {% if available_projects %}
+                    Select a client project to assign this team to
+                    {% else %}
+                    <span class="text-orange-600">No projects available for team assignment</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            <!-- Team Lead -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Team Lead *</label>
+                <select name="lead_developer_id" required class="form-input">
+                    <option value="">-- Select Team Lead --</option>
+                    {% for dev in available_developers %}
+                    <option value="{{ dev.id }}">
+                        {{ dev.user.full_name }} - {{ dev.title or 'Developer' }} ({{ dev.experience_years }}y exp)
+                    </option>
+                    {% endfor %}
+                </select>
+                <p class="text-sm text-slate-500 mt-1">Choose an experienced developer to lead the team</p>
+            </div>
+
+            <!-- Deadline -->
+            <div class="mb-6">
+                <label class="block text-sm font-medium mb-2">Project Deadline (Optional)</label>
+                <input type="date" name="deadline" class="form-input">
+                <p class="text-sm text-slate-500 mt-1">Set a target completion date</p>
+            </div>
+
+            <!-- Info Box -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                <div class="flex gap-3">
+                    <svg class="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    <div class="text-sm text-blue-800">
+                        <p class="font-medium mb-1">After creating the team:</p>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>The team lead will be automatically added as a member</li>
+                            <li>You can add more developers from the team detail page</li>
+                            <li>Start the team when all members are assigned</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="flex gap-3">
+                <button type="submit" class="btn-primary">
+                    <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    Create Team
+                </button>
+                <a href="{{ url_for('admin.teams') }}" class="btn-secondary">Cancel</a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Available Developers Preview -->
+    {% if available_developers %}
+    <div class="bg-white rounded-2xl p-6 shadow-sm border mt-6">
+        <h3 class="text-lg font-semibold mb-4">Available Developers ({{ available_developers|length }})</h3>
+        <div class="grid md:grid-cols-2 gap-3">
+            {% for dev in available_developers[:8] %}
+            <div class="flex items-center gap-3 p-3 border rounded-lg">
+                <img src="{{ dev.user.get_avatar_url() }}" alt="{{ dev.user.full_name }}"
+                    class="w-10 h-10 rounded-full">
+                <div class="flex-1 min-w-0">
+                    <p class="font-medium truncate">{{ dev.user.full_name }}</p>
+                    <p class="text-sm text-slate-500 truncate">{{ dev.title or 'Developer' }} • {{ dev.experience_years
+                        }}y</p>
+                </div>
+                <span class="px-2 py-1 bg-green-100 text-green-700 rounded text-xs">{{ dev.user.status|title }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% if available_developers|length > 8 %}
+        <p class="text-sm text-slate-500 mt-3 text-center">+ {{ available_developers|length - 8 }} more developers</p>
+        {% endif %}
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

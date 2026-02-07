@@ -1,0 +1,263 @@
+{% extends "dashboard_base.html" %}
+
+{% block role_label %}Admin Panel{% endblock %}
+
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg>
+    <span>Core Admin</span>
+</a>
+
+<div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads & Projects</div>
+
+<a href="{{ url_for('admin_leads.dashboard') }}"
+    class="sidebar-link {% if request.endpoint == 'admin_leads.dashboard' %}active{% endif %}">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+    </svg>
+    <span>Lead Dashboard</span>
+</a>
+
+<a href="{{ url_for('admin_leads.lead_list') }}"
+    class="sidebar-link {% if request.endpoint == 'admin_leads.lead_list' %}active{% endif %}">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+        </path>
+    </svg>
+    <span>Manage Leads</span>
+</a>
+
+<a href="{{ url_for('admin_leads.project_list') }}"
+    class="sidebar-link {% if request.endpoint == 'admin_leads.project_list' %}active{% endif %}">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg>
+    <span>Student Projects</span>
+</a>
+{% endblock %}
+
+{% block page_title %}Lead & Project Dashboard{% endblock %}
+{% block page_subtitle %}Real-time monitoring of inquiries and projects{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Total Revenue</p>
+                <p class="text-3xl font-bold text-slate-800">₹{{ "{:,.2f}".format(stats.total_revenue) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Developer Cost</p>
+                <p class="text-3xl font-bold text-slate-800">₹{{ "{:,.2f}".format(stats.total_dev_cost) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-red-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Net Profit</p>
+                <p class="text-3xl font-bold text-slate-800">₹{{ "{:,.2f}".format(stats.total_profit) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Sales Leaderboard -->
+<div class="mb-8 bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+    <div class="flex items-center justify-between mb-6">
+        <h3 class="font-semibold text-lg text-slate-800">Sales Team Performance</h3>
+        <span class="badge badge-success">Top Performers</span>
+    </div>
+
+    {% if leaderboard %}
+    <table class="w-full text-left border-collapse">
+        <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+            <tr>
+                <th class="px-4 py-3 rounded-l-lg">Rank</th>
+                <th class="px-4 py-3">Sales Rep / Admin</th>
+                <th class="px-4 py-3 text-center">Projects Closed</th>
+                <th class="px-4 py-3 text-right rounded-r-lg">Total Revenue</th>
+            </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100">
+            {% for row in leaderboard %}
+            <tr class="hover:bg-slate-50 transition-colors">
+                <td class="px-4 py-3">
+                    <div
+                        class="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center font-bold text-slate-600 text-sm">
+                        #{{ loop.index }}
+                    </div>
+                </td>
+                <td class="px-4 py-3">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ row[0].get_avatar_url() }}" class="w-8 h-8 rounded-full border border-slate-200">
+                        <div class="font-medium text-slate-800">{{ row[0].full_name }}</div>
+                    </div>
+                </td>
+                <td class="px-4 py-3 text-center font-bold text-slate-700">
+                    {{ row.project_count }}
+                </td>
+                <td class="px-4 py-3 text-right">
+                    <div class="font-bold text-emerald-600">₹{{ "{:,.0f}".format(row.revenue) }}</div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div class="text-center py-8 text-slate-400 italic">No sales data recorded yet.</div>
+    {% endif %}
+</div>
+
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Total Leads</p>
+                <p class="text-3xl font-bold text-slate-800">{{ stats.total_leads }}</p>
+            </div>
+            <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-4 text-sm">
+            <span class="text-emerald-600 font-medium">{{ stats.active_follow_ups }} Active Follow-ups</span>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Confirmed Projects</p>
+                <p class="text-3xl font-bold text-slate-800">{{ stats.confirmed_projects }}</p>
+            </div>
+            <div class="w-12 h-12 bg-emerald-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+            </div>
+        </div>
+        <div class="mt-4 text-sm text-slate-500">
+            {{ stats.ongoing_projects }} In Progress · {{ stats.completed_projects }} Completed
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <div class="flex items-center justify-between">
+            <div>
+                <p class="text-slate-500 text-sm">Pending Payments</p>
+                <p class="text-3xl font-bold text-slate-800">₹{{ "{:,.2f}".format(stats.pending_payments) }}</p>
+            </div>
+            <div class="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center">
+                <svg class="w-6 h-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z">
+                    </path>
+                </svg>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="grid lg:grid-cols-2 gap-8 mb-8">
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold text-lg">Upcoming Callbacks</h3>
+            <a href="{{ url_for('admin_leads.lead_list') }}" class="text-primary-600 text-sm hover:underline">View
+                All</a>
+        </div>
+        {% if upcoming_callbacks %}
+        <div class="space-y-4">
+            {% for follow in upcoming_callbacks %}
+            <div class="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-100">
+                <div class="flex items-center gap-3">
+                    <div class="p-2 bg-white rounded-lg shadow-sm">
+                        <svg class="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z">
+                            </path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="font-medium text-slate-800">{{ follow.lead.student_name }}</div>
+                        <div class="text-xs text-slate-500">{{ follow.callback_datetime.strftime('%b %d, %I:%M %p') }}
+                        </div>
+                    </div>
+                </div>
+                <a href="{{ url_for('admin_leads.lead_detail', lead_id=follow.lead_id) }}"
+                    class="px-3 py-1 bg-white rounded-lg border border-slate-200 text-xs font-medium text-slate-600 hover:bg-slate-50 transition-colors">Details</a>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="text-slate-500 text-sm text-center py-8">No upcoming callbacks scheduled</p>
+        {% endif %}
+    </div>
+
+    <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between mb-6">
+            <h3 class="font-semibold text-lg">Recent Inquiries</h3>
+            <a href="{{ url_for('admin_leads.add_lead') }}" class="btn btn-primary btn-sm">+ New Lead</a>
+        </div>
+        <div class="space-y-4">
+            {% for lead in recent_leads %}
+            <div
+                class="flex items-center justify-between p-3 rounded-xl bg-white border border-slate-100 hover:border-primary-200 transition-colors">
+                <div>
+                    <div class="font-medium text-slate-800">{{ lead.student_name }}</div>
+                    <div class="text-xs text-slate-500">{{ lead.domain }} · {{ lead.college }}</div>
+                </div>
+                <div>
+                    <span
+                        class="badge {% if lead.status == 'New Lead' %}badge-info{% elif lead.status == 'Confirmed' %}badge-success{% else %}badge-warning{% endif %}">
+                        {{ lead.status }}
+                    </span>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

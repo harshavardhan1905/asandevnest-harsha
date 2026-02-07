@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}{{ developer.user.full_name }}{% endblock %}
+{% block content %}
+<section class="py-16">
+    <div class="max-w-5xl mx-auto px-4">
+        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+            <!-- Header -->
+            <div class="bg-gradient-to-r from-primary-500 to-accent-500 p-8">
+                <div class="flex flex-col md:flex-row items-center gap-6">
+                    <img src="{{ developer.user.get_avatar_url() }}"
+                        class="w-24 h-24 rounded-2xl object-cover bg-white/20">
+                    <div class="text-center md:text-left text-white">
+                        <div class="flex items-center gap-3 justify-center md:justify-start mb-2">
+                            <h1 class="text-3xl font-bold">{{ developer.user.full_name }}</h1>
+                            <span class="verified-badge bg-white/20">Verified</span>
+                        </div>
+                        <p class="text-white/80 text-lg">{{ developer.tagline or 'Expert Developer' }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="p-8">
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Main Content -->
+                    <div class="md:col-span-2">
+                        <h2 class="text-xl font-semibold mb-4">About</h2>
+                        <p class="text-slate-600 mb-8">{{ developer.bio or 'Experienced developer ready to help bring
+                            your ideas to life.' }}</p>
+
+                        <h2 class="text-xl font-semibold mb-4">Skills</h2>
+                        <div class="flex flex-wrap gap-2 mb-8">
+                            {% for skill in developer.get_skills_list() %}
+                            <span class="px-3 py-1 bg-primary-100 text-primary-700 rounded-lg">{{ skill }}</span>
+                            {% endfor %}
+                        </div>
+
+                        {% if articles %}
+                        <h2 class="text-xl font-semibold mb-4">Featured Articles</h2>
+                        <div class="space-y-4">
+                            {% for article in articles %}
+                            <a href="{{ url_for('articles.article_detail', slug=article.slug) }}"
+                                class="block p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition">
+                                <h3 class="font-semibold">{{ article.title }}</h3>
+                                <p class="text-sm text-slate-500">{{ article.excerpt[:100] }}...</p>
+                            </a>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Sidebar -->
+                    <div>
+                        <div class="bg-slate-50 rounded-xl p-6 mb-6">
+                            <div class="text-center mb-6">
+                                <div class="text-3xl font-bold text-primary-600">{{ developer.experience_years }}+</div>
+                                <div class="text-slate-500">Years Experience</div>
+                            </div>
+                            <div class="space-y-3 mb-6">
+                                {% if developer.offers_consulting %}
+                                <div class="flex items-center gap-2 text-sm"><span
+                                        class="w-2 h-2 bg-emerald-500 rounded-full"></span>Offers Consulting</div>
+                                {% endif %}
+                                {% if developer.offers_classes %}
+                                <div class="flex items-center gap-2 text-sm"><span
+                                        class="w-2 h-2 bg-emerald-500 rounded-full"></span>Offers Classes</div>
+                                {% endif %}
+                                {% if developer.offers_support %}
+                                <div class="flex items-center gap-2 text-sm"><span
+                                        class="w-2 h-2 bg-emerald-500 rounded-full"></span>Technical Support</div>
+                                {% endif %}
+                            </div>
+                            {% if current_user.is_authenticated and current_user.is_client() %}
+                            <a href="{{ url_for('client.book_appointment', developer_id=developer.id) }}"
+                                class="btn-primary w-full text-center">
+                                Book Appointment
+                            </a>
+                            {% else %}
+                            <a href="{{ url_for('auth.register_client') }}" class="btn-primary w-full text-center">
+                                Sign Up to Book
+                            </a>
+                            {% endif %}
+                        </div>
+
+                        <!-- CTA -->
+                        <div
+                            class="bg-gradient-to-br from-primary-500 to-accent-500 rounded-xl p-6 text-white text-center">
+                            <h3 class="font-semibold mb-2">Need a Team?</h3>
+                            <p class="text-sm text-white/80 mb-4">Let Asan form your perfect team</p>
+                            <a href="{{ url_for('auth.register_client') }}"
+                                class="btn-secondary bg-white text-primary-600 w-full">Submit Idea</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

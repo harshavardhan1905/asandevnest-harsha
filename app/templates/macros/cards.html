@@ -1,0 +1,116 @@
+{% macro developer_card(dev) %}
+<div
+    class="developer-card group relative bg-white rounded-2xl p-6 transition-all duration-300 hover:-translate-y-1 hover:shadow-xl border border-slate-100 overflow-hidden">
+    <!-- Gradient Border Top -->
+    <div
+        class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-primary-500 to-cyan-500 transform origin-left scale-x-0 group-hover:scale-x-100 transition-transform duration-300">
+    </div>
+
+    <div class="flex items-center gap-4 mb-4">
+        <div class="relative">
+            <img src="{{ dev.user.get_avatar_url() }}" alt="{{ dev.user.full_name }}"
+                class="w-16 h-16 rounded-2xl object-cover shadow-sm bg-slate-50">
+            {% if dev.user.status == 'verified' %}
+            <div class="absolute -bottom-1 -right-1 bg-white rounded-full p-0.5 shadow-sm">
+                <svg class="w-5 h-5 text-emerald-500" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clip-rule="evenodd"></path>
+                </svg>
+            </div>
+            {% endif %}
+        </div>
+        <div>
+            <h3 class="font-bold text-slate-900 group-hover:text-primary-600 transition-colors">{{ dev.user.full_name }}
+            </h3>
+            <p class="text-sm text-slate-500 font-medium">{{ dev.tagline or 'Senior Developer' }}</p>
+        </div>
+    </div>
+
+    <p class="text-sm text-slate-600 mb-4 line-clamp-2 min-h-[2.5rem]">{{ dev.bio or 'Experienced developer ready to
+        tackle complex challenges.' }}</p>
+
+    <div class="flex flex-wrap gap-2 mb-6">
+        {% for skill in dev.get_skills_list()[:3] %}
+        <span class="px-2.5 py-1 bg-slate-50 text-slate-600 text-xs font-medium rounded-lg border border-slate-100">{{
+            skill }}</span>
+        {% endfor %}
+        {% if dev.get_skills_list()|length > 3 %}
+        <span class="px-2.5 py-1 bg-slate-50 text-slate-400 text-xs font-medium rounded-lg">+{{
+            dev.get_skills_list()|length - 3 }}</span>
+        {% endif %}
+    </div>
+
+    <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+        <div class="flex items-center gap-1.5 text-sm text-slate-500 font-medium">
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                </path>
+            </svg>
+            {{ dev.experience_years }}+ Years
+        </div>
+        <a href="{{ url_for('main.developer_profile', developer_id=dev.id) }}"
+            class="inline-flex items-center gap-1 text-primary-600 text-sm font-semibold hover:gap-2 transition-all">
+            View Profile
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3">
+                </path>
+            </svg>
+        </a>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro article_card(article) %}
+<article
+    class="article-card group bg-white rounded-2xl overflow-hidden border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+    <div class="relative overflow-hidden h-48">
+        <div class="absolute inset-0 bg-slate-200 animate-pulse" id="loader-{{ article.id }}"></div>
+        <img src="{{ article.get_cover_url() }}" alt="{{ article.title }}"
+            onload="document.getElementById('loader-{{ article.id }}').style.display='none'"
+            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700">
+        <div class="absolute top-4 left-4">
+            <span
+                class="px-3 py-1 bg-white/90 backdrop-blur-md text-primary-700 text-xs font-bold rounded-full shadow-lg">
+                {{ article.article_type|replace('_', ' ')|title }}
+            </span>
+        </div>
+    </div>
+
+    <div class="p-6">
+        <div class="flex items-center gap-2 text-xs text-slate-500 font-medium mb-3">
+            <span class="flex items-center gap-1">
+                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                {{ article.get_reading_time() }} min read
+            </span>
+            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+            <span>{{ article.published_at.strftime('%b %d, %Y') }}</span>
+        </div>
+
+        <h3 class="text-lg font-bold text-slate-900 mb-2 line-clamp-2 group-hover:text-primary-600 transition-colors">
+            <a href="{{ url_for('articles.article_detail', slug=article.slug) }}">
+                {{ article.title }}
+            </a>
+        </h3>
+        <p class="text-slate-600 text-sm mb-4 line-clamp-2 leading-relaxed">{{ article.excerpt }}</p>
+
+        <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+            <div class="flex items-center gap-2.5">
+                <img src="{{ article.developer.user.get_avatar_url() }}" alt=""
+                    class="w-8 h-8 rounded-full ring-2 ring-white shadow-sm object-cover">
+                <span class="text-sm font-medium text-slate-700">{{ article.developer.user.full_name }}</span>
+            </div>
+            <a href="{{ url_for('articles.article_detail', slug=article.slug) }}"
+                class="w-8 h-8 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 group-hover:bg-primary-50 group-hover:text-primary-600 transition-colors">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</article>
+{% endmacro %}

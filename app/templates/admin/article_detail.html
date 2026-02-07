@@ -1,0 +1,155 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}{{ article.title }}{% endblock %}
+{% block page_subtitle %}Article Review{% endblock %}
+
+{% block content %}
+<div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 space-y-6">
+        <!-- Article Content -->
+        <div class="bg-white rounded-2xl p-8 shadow-sm border">
+            <div class="flex items-center justify-between mb-6">
+                <div class="flex items-center gap-3">
+                    <img src="{{ article.developer.user.get_avatar_url() }}"
+                        alt="{{ article.developer.user.full_name }}" class="w-10 h-10 rounded-full">
+                    <div>
+                        <p class="font-medium">{{ article.developer.user.full_name }}</p>
+                        <p class="text-sm text-slate-500">{{ article.created_at.strftime('%B %d, %Y') }}</p>
+                    </div>
+                </div>
+                <span class="{{ article.get_status_badge_class() }} badge">{{ article.status|title }}</span>
+            </div>
+
+            {% if article.cover_image %}
+            <img src="{{ article.cover_image }}" alt="{{ article.title }}" class="w-full rounded-lg mb-6">
+            {% endif %}
+
+            <div class="prose max-w-none">
+                <p class="text-lg text-slate-600 mb-4">{{ article.excerpt }}</p>
+                <div class="article-content">{{ article.content|safe }}</div>
+            </div>
+
+            <div class="flex flex-wrap gap-2 mt-6 pt-6 border-t">
+                {% for tech in article.get_technologies_list() %}
+                <span class="px-3 py-1 bg-primary-50 text-primary-600 rounded-full text-sm">{{ tech }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Sidebar -->
+    <div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border sticky top-6">
+            <h3 class="text-lg font-semibold mb-4">Moderation</h3>
+
+            <a href="{{ url_for('admin.edit_article', article_id=article.id) }}"
+                class="block w-full text-center px-4 py-2 mb-3 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200">
+                Edit Article
+            </a>
+
+            {% if article.status == 'pending' %}
+            <form method="POST" action="{{ url_for('admin.approve_article', article_id=article.id) }}" class="mb-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="w-full btn-primary">Approve Article</button>
+            </form>
+
+            <form method="POST" action="{{ url_for('admin.reject_article', article_id=article.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <textarea name="reason" placeholder="Rejection reason" class="form-input text-sm mb-2"
+                    rows="2"></textarea>
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700">Reject</button>
+            </form>
+            {% endif %}
+
+            {% if article.status != 'hidden' and article.status != 'pending' %}
+            <form method="POST" action="{{ url_for('admin.hide_article', article_id=article.id) }}" class="mb-3"
+                onsubmit="return confirm('Hide this article from the community?')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-slate-100 text-slate-700 rounded-lg font-medium hover:bg-slate-200">
+                    Hide from Community
+                </button>
+            </form>
+            {% endif %}
+
+            <form method="POST" action="{{ url_for('admin.delete_article', article_id=article.id) }}"
+                onsubmit="return confirm('Are you sure you want to PERMANENTLY delete this article? This cannot be undone.')">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="w-full px-4 py-2 border-2 border-red-100 text-red-600 rounded-lg font-medium hover:bg-red-50 hover:border-red-200">
+                    Delete Article
+                </button>
+            </form>
+
+            <div class="mt-6 pt-6 border-t space-y-3 text-sm">
+                <div>
+                    <label class="text-slate-500">Type</label>
+                    <p class="font-medium">{{ article.article_type|title }}</p>
+                </div>
+                <div>
+                    <label class="text-slate-500">Domain</label>
+                    <p class="font-medium">{{ article.domain or 'General' }}</p>
+                </div>
+                <div>
+                    <label class="text-slate-500">Views</label>
+                    <p class="font-medium">{{ article.views_count }}</p>
+                </div>
+                <div>
+                    <label class="text-slate-500">Reading Time</label>
+                    <p class="font-medium">{{ article.reading_time_minutes }} min</p>
+                </div>
+            </div>
+
+            <div class="mt-6 pt-6 border-t">
+                <a href="{{ url_for('admin.articles') }}" class="text-slate-600 hover:underline text-sm">← Back to
+                    Articles</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

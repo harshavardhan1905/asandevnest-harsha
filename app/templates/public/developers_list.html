@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+
+{% block title %}Developers{% endblock %}
+
+{% block content %}
+<section class="py-16">
+    <div class="max-w-7xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">Verified Developers</h1>
+            <p class="text-xl text-slate-600">Discover talented developers through their work and expertise</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border mb-8">
+            <form action="{{ url_for('main.developers_list') }}" method="GET" class="grid md:grid-cols-4 gap-4">
+                <select name="skill" class="form-input" onchange="this.form.submit()">
+                    <option value="">All Skills</option>
+                    {% for skill in all_skills %}
+                    <option value="{{ skill }}" {% if current_skill==skill %}selected{% endif %}>{{ skill }}</option>
+                    {% endfor %}
+                </select>
+                <select name="domain" class="form-input" onchange="this.form.submit()">
+                    <option value="">All Domains</option>
+                    {% for domain in all_domains %}
+                    <option value="{{ domain }}" {% if current_domain==domain %}selected{% endif %}>{{ domain }}
+                    </option>
+                    {% endfor %}
+                </select>
+                <select name="availability" class="form-input" onchange="this.form.submit()">
+                    <option value="">Any Availability</option>
+                    <option value="available" {% if current_availability=='available' %}selected{% endif %}>Available
+                    </option>
+                </select>
+                <a href="{{ url_for('main.developers_list') }}" class="btn-secondary text-center">Clear</a>
+            </form>
+        </div>
+
+        <!-- Developers Grid -->
+        {% if developers.items %}
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {% for dev in developers.items %}
+            <div class="developer-card">
+                <div class="flex items-center gap-4 mb-4">
+                    <img src="{{ dev.user.get_avatar_url() }}" class="w-16 h-16 rounded-xl object-cover bg-slate-200">
+                    <div>
+                        <h3 class="font-semibold text-lg">{{ dev.user.full_name }}</h3>
+                        <span class="verified-badge">Verified Dev</span>
+                    </div>
+                </div>
+                <p class="text-slate-600 text-sm mb-4">{{ dev.tagline or 'Expert Developer' }}</p>
+                <div class="flex flex-wrap gap-2 mb-4">
+                    {% for skill in dev.get_skills_list()[:4] %}
+                    <span class="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded">{{ skill }}</span>
+                    {% endfor %}
+                </div>
+                <div class="flex items-center justify-between pt-4 border-t">
+                    <span class="text-sm text-slate-500">{{ dev.experience_years }}+ years</span>
+                    <a href="{{ url_for('main.developer_profile', developer_id=dev.id) }}"
+                        class="text-primary-600 font-medium hover:underline">View Profile →</a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if developers.pages > 1 %}
+        <div class="pagination mt-8">
+            {% for page in developers.iter_pages() %}
+            {% if page %}
+            {% if page == developers.page %}
+            <span class="current">{{ page }}</span>
+            {% else %}
+            <a href="{{ url_for('main.developers_list', page=page, skill=current_skill, domain=current_domain) }}">{{
+                page }}</a>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="text-center py-16">
+            <p class="text-slate-500">No developers found matching your criteria</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

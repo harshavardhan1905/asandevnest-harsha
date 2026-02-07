@@ -1,0 +1,127 @@
+{% extends "dashboard_base.html" %}
+
+{% block role_label %}Admin Panel{% endblock %}
+
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg>
+    <span>Core Admin</span>
+</a>
+
+<a href="{{ url_for('admin.manage_admins') }}" class="sidebar-link active">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg>
+    <span>Manage Admins</span>
+</a>
+
+<div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads & Projects</div>
+
+<a href="{{ url_for('admin_leads.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+    </svg>
+    <span>Lead Dashboard</span>
+</a>
+{% endblock %}
+
+{% block page_title %}Admin Management{% endblock %}
+{% block page_subtitle %}Manage system administrators and access{% endblock %}
+
+{% block content %}
+<div class="row">
+    <!-- Add new Admin -->
+    <div class="col-md-4 mb-6">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-slate-200 sticky top-6">
+            <h3 class="font-bold text-lg text-slate-800 mb-4">Add New Admin</h3>
+            <form action="{{ url_for('admin.manage_admins') }}" method="POST" class="space-y-4">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Full Name</label>
+                    <input type="text" name="name" required class="form-input w-full rounded-lg border-slate-300"
+                        placeholder="John Doe">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Email Address</label>
+                    <input type="email" name="email" required class="form-input w-full rounded-lg border-slate-300"
+                        placeholder="admin@example.com">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-sm font-medium text-slate-700">Password</label>
+                    <input type="password" name="password" required
+                        class="form-input w-full rounded-lg border-slate-300" placeholder="••••••••">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-full py-2.5">Add Admin User</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Admin List -->
+    <div class="col-md-8">
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="p-6 border-b border-slate-100 flex justify-between items-center">
+                <h3 class="font-bold text-lg text-slate-800">Existing Admins</h3>
+                <span class="bg-primary-50 text-primary-700 text-xs font-bold px-2 py-1 rounded-full">{{ admins|length
+                    }} Users</span>
+            </div>
+            <table class="w-full text-left border-collapse">
+                <thead class="bg-slate-50 text-slate-500 text-xs uppercase font-semibold">
+                    <tr>
+                        <th class="px-6 py-4">User</th>
+                        <th class="px-6 py-4">Role</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Joined</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100">
+                    {% for admin in admins %}
+                    <tr class="hover:bg-slate-50 transition-colors">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <img src="{{ admin.get_avatar_url() }}"
+                                    class="w-10 h-10 rounded-full border border-slate-200">
+                                <div>
+                                    <div class="font-medium text-slate-900">{{ admin.full_name }}</div>
+                                    <div class="text-xs text-slate-500">{{ admin.email }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span
+                                class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700 border border-purple-200">
+                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+                                    </path>
+                                </svg>
+                                Admin
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="inline-flex px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700">
+                                {{ admin.status|title }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-sm text-slate-500">
+                            {{ admin.created_at.strftime('%Y-%m-%d') }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

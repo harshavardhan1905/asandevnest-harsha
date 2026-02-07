@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}For Developers{% endblock %}
+{% block content %}
+<section class="hero-gradient py-20">
+    <div class="max-w-4xl mx-auto px-4 text-center text-white">
+        <h1 class="text-4xl md:text-5xl font-bold mb-6">Join the Trusted Developer Community</h1>
+        <p class="text-xl text-white/80 mb-8">Get discovered through your work, join curated teams, and work on exciting
+            projects.</p>
+        <a href="{{ url_for('auth.register_developer') }}"
+            class="inline-block px-8 py-4 bg-white text-primary-600 rounded-xl font-semibold">Join as Developer</a>
+    </div>
+</section>
+
+<section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+        <h2 class="text-3xl font-bold text-center mb-12">Why Developers Choose Asan DevNest</h2>
+        <div class="grid md:grid-cols-3 gap-8">
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">Showcase Your Work</h3>
+                <p class="text-slate-600">Publish articles, case studies, and research. Get discovered through your
+                    expertise.</p>
+            </div>
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">Join Curated Teams</h3>
+                <p class="text-slate-600">Work on team projects with other verified developers on exciting client
+                    projects.</p>
+            </div>
+            <div class="p-6 border rounded-2xl">
+                <h3 class="text-xl font-semibold mb-3">Earn from Expertise</h3>
+                <p class="text-slate-600">Offer consulting, classes, and technical support sessions to clients globally.
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

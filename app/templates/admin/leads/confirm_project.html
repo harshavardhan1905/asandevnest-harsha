@@ -1,0 +1,241 @@
+{% extends "dashboard_base.html" %}
+
+{% block role_label %}Admin Panel{% endblock %}
+
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg>
+    <span>Core Admin</span>
+</a>
+
+<a href="{{ url_for('admin.manage_admins') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg>
+    <span>Manage Admins</span>
+</a>
+
+
+<div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads & Projects</div>
+
+<a href="{{ url_for('admin_leads.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+    </svg>
+    <span>Lead Dashboard</span>
+</a>
+{% endblock %}
+
+{% block page_title %}Confirm Student Project{% endblock %}
+{% block page_subtitle %}Convert lead to active project record{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl">
+    <div class="bg-white rounded-2xl p-8 shadow-sm border border-slate-200">
+        <div class="mb-8 flex items-center gap-4 p-4 rounded-xl bg-primary-50 border border-primary-100">
+            <div class="w-12 h-12 bg-white rounded-lg flex items-center justify-center shadow-sm">
+                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                </svg>
+            </div>
+            <div>
+                <div class="text-sm text-primary-600 font-semibold uppercase tracking-wider">Converting Lead</div>
+                <div class="text-lg font-bold text-slate-800">{{ lead.student_name }} · {{ lead.college }}</div>
+            </div>
+        </div>
+
+        <form action="{{ url_for('admin_leads.confirm_project', lead_id=lead.id) }}" method="POST" class="space-y-8">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <!-- Basic Project Details -->
+            <div class="space-y-6">
+                <h3 class="font-bold text-xl text-slate-800 border-b pb-2">Project Specification</h3>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700">Project Title *</label>
+                    <input type="text" name="title" required
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                        placeholder="e.g., Smart College Portal with AI Chatbot">
+                </div>
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700">Detailed Scope</label>
+                    <textarea name="scope" rows="4"
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                        placeholder="List key modules and features confirmed by the student...">{{ lead.requirement_summary }}</textarea>
+                </div>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Technology Stack</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="Python/Flask"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">Flask</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="AI/ML"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">AI / ML</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="React/Node"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">React / Node</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="IoT"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">IoT</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="Android/Flutter"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">Android</span>
+                            </label>
+                            <label
+                                class="flex items-center gap-2 p-2 rounded-lg border border-slate-100 hover:bg-slate-50 cursor-pointer">
+                                <input type="checkbox" name="tech_stack" value="PHP/MySQL"
+                                    class="w-4 h-4 rounded text-primary-600">
+                                <span class="text-sm">PHP</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Timeline (Weeks) *</label>
+                        <input type="number" name="timeline_weeks" required min="1"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                    </div>
+                </div>
+
+                <!-- Admin Responsibility -->
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700">Closed By (Sales Rep / Admin) *</label>
+                    <select name="closed_by_id" required
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                        <option value="" disabled selected>Select who closed this deal...</option>
+                        {% for admin in admins %}
+                        <option value="{{ admin.id }}" {% if admin.id==current_user.id %}selected{% endif %}>{{
+                            admin.full_name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+
+                <div class="space-y-2">
+                    <label class="block text-sm font-semibold text-slate-700">Academic / College Requirements</label>
+                    <textarea name="academic_requirements" rows="2"
+                        class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                        placeholder="e.g., Specific SRS format, PPT templates, or hardcopy requirements..."></textarea>
+                </div>
+            </div>
+
+            <!-- Developer Assignment -->
+            <div class="space-y-6">
+                <h3 class="font-bold text-xl text-slate-800 border-b pb-2">Developer Assignment</h3>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-100">
+                    <div class="space-y-4">
+                        <label class="block text-sm font-semibold text-slate-700">Who will build this project?</label>
+                        <div class="grid md:grid-cols-2 gap-4">
+                            <label
+                                class="flex items-center gap-3 p-4 rounded-xl border-2 border-slate-200 bg-white cursor-pointer hover:border-primary-500 transition-all has-[:checked]:border-primary-500 has-[:checked]:bg-primary-50">
+                                <input type="radio" name="developer_id" id="admin_radio" value="admin_built" checked
+                                    class="w-5 h-5 text-primary-600 focus:ring-primary-500"
+                                    onchange="document.getElementById('admin_assignee_div').style.display='block'; document.getElementById('dev_select').selectedIndex=0;">
+                                <div>
+                                    <div class="font-bold text-slate-800">Build from Admin Side</div>
+                                    <div class="text-xs text-slate-500">Asan Team internal development</div>
+                                </div>
+                            </label>
+
+                            <div id="admin_assignee_div" class="space-y-2 pl-8 border-l-2 border-primary-100 mt-2">
+                                <label class="text-xs font-bold text-primary-600 uppercase tracking-wider block">Assign
+                                    Specific Admin</label>
+                                <select name="admin_assignee_id"
+                                    class="w-full px-3 py-2 rounded-lg border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all text-sm">
+                                    {% for admin in admins %}
+                                    <option value="{{ admin.id }}" {% if admin.id==current_user.id %}selected{% endif
+                                        %}>{{ admin.full_name }} (You)</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="space-y-2">
+
+                                <label class="text-xs font-bold text-slate-400 uppercase tracking-wider block">Or Assign
+                                    a Developer</label>
+                                <select name="developer_id" id="dev_select"
+                                    class="w-full px-4 py-3 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                                    onchange="document.getElementById('admin_radio').checked = false; document.getElementById('admin_assignee_div').style.display='none';">
+                                    <option value="admin_built" selected>Select a specific developer...</option>
+                                    {% for dev in developers %}
+                                    <option value="{{ dev.id }}">{{ dev.full_name }} ({{
+                                        dev.developer_profile.experience_years }}y exp)</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="pt-4 border-t border-slate-200">
+                            <label class="block text-sm font-semibold text-slate-700">Developer Payout / Cost (₹)
+                                *</label>
+                            <input type="number" name="payout_amount" required min="0" value="0"
+                                class="w-full md:w-1/2 px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                                placeholder="Amount to be paid to developer">
+                            <p class="text-xs text-slate-400 mt-1">This amount will be deducted from revenue to
+                                calculate profit.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Commercial Details -->
+            <div class="space-y-6">
+                <h3 class="font-bold text-xl text-slate-800 border-b pb-2">Commercials & Payments</h3>
+
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Total Project Cost (₹) *</label>
+                        <input type="number" name="total_cost" required min="0"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all"
+                            placeholder="Enter amount in INR">
+                    </div>
+                    <div class="space-y-2">
+                        <label class="block text-sm font-semibold text-slate-700">Payment Structure</label>
+                        <select name="payment_structure"
+                            class="w-full px-4 py-2 rounded-xl border border-slate-200 focus:ring-2 focus:ring-primary-500 outline-none transition-all">
+                            <option value="Full Advance">Full Advance</option>
+                            <option value="50% Advance, 50% Delivery" selected>50% Advance, 50% Delivery</option>
+                            <option value="Milestone Based">Milestone Based</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex gap-4 pt-6 border-t">
+                <button type="submit"
+                    class="btn btn-primary px-12 h-12 text-lg font-bold shadow-xl shadow-primary-500/30">Confirm &
+                    Create Project</button>
+                <a href="{{ url_for('admin_leads.lead_detail', lead_id=lead.id) }}"
+                    class="btn bg-slate-100 text-slate-600 hover:bg-slate-200 px-8 flex items-center h-12">Back to
+                    Details</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

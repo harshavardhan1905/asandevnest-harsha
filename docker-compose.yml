@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - FLASK_ENV=production
+      - SECRET_KEY=dev-secret-key-change-in-prod
+      - DATABASE_URL=sqlite:///asan_devnest.db
+    volumes:
+      - ./instance:/app/instance
+      - ./uploads:/app/uploads
+    restart: always

@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: asan-devnest
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app
+    plan: free
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: FLASK_ENV
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        fromDatabase:
+          name: asan-db
+          property: connectionString
+
+databases:
+  - name: asan-db
+    databaseName: asandevnest
+    user: asandevnest
+    plan: free

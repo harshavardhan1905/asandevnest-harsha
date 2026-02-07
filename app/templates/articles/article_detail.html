@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+
+{% block title %}{{ article.title }}{% endblock %}
+
+{% block content %}
+<!-- Cover Image -->
+<div class="relative h-96 bg-slate-900">
+    <img src="{{ article.get_cover_url() }}" alt="" class="w-full h-full object-cover opacity-50">
+    <div class="absolute inset-0 bg-gradient-to-t from-slate-900 to-transparent"></div>
+</div>
+
+<!-- Article Content -->
+<article class="relative z-10 -mt-32">
+    <div class="max-w-4xl mx-auto px-4">
+        <!-- Header -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="flex items-center gap-2 mb-4">
+                <span class="badge badge-purple">{{ article.article_type|replace('_', ' ')|title }}</span>
+                {% if article.domain %}
+                <span class="badge badge-info">{{ article.domain }}</span>
+                {% endif %}
+                <span class="text-slate-500 text-sm ml-auto">{{ article.get_reading_time() }} min read</span>
+            </div>
+
+            <h1 class="text-3xl md:text-4xl font-bold mb-4">{{ article.title }}</h1>
+
+            {% if article.excerpt %}
+            <p class="text-xl text-slate-600 mb-6">{{ article.excerpt }}</p>
+            {% endif %}
+
+            <!-- Technologies -->
+            <div class="flex flex-wrap gap-2 mb-6">
+                {% for tech in article.get_technologies_list() %}
+                <span class="px-3 py-1 bg-slate-100 text-slate-700 rounded-lg text-sm">{{ tech }}</span>
+                {% endfor %}
+            </div>
+
+            <!-- Author -->
+            <div class="flex items-center justify-between pt-6 border-t">
+                <div class="flex items-center gap-4">
+                    <img src="{{ article.developer.user.get_avatar_url() }}" class="w-14 h-14 rounded-xl object-cover">
+                    <div>
+                        <div class="flex items-center gap-2">
+                            <span class="font-semibold">{{ article.developer.user.full_name }}</span>
+                            <span class="verified-badge">Verified</span>
+                        </div>
+                        <p class="text-sm text-slate-500">{{ article.developer.tagline }}</p>
+                    </div>
+                </div>
+                <div class="text-right text-sm text-slate-500">
+                    <div>{{ article.published_at.strftime('%B %d, %Y') if article.published_at else '' }}</div>
+                    <div>{{ article.views_count }} views</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Content -->
+        <div class="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div class="prose max-w-none">
+                {{ article.content|safe }}
+            </div>
+        </div>
+
+        <!-- CTA -->
+        <div class="bg-gradient-to-r from-primary-500 to-accent-500 rounded-2xl p-8 text-white text-center mb-8">
+            <h3 class="text-2xl font-bold mb-2">Want to Build Something Similar?</h3>
+            <p class="text-white/80 mb-6">Let Asan form the perfect team to bring your idea to life</p>
+            <div class="flex gap-4 justify-center">
+                <a href="{{ url_for('auth.register_client') }}"
+                    class="px-6 py-3 bg-white text-primary-600 rounded-xl font-semibold hover:bg-white/90">
+                    Submit Your Idea
+                </a>
+                <a href="{{ url_for('client.book_appointment', developer_id=article.developer_id) }}"
+                    class="px-6 py-3 bg-white/10 text-white border border-white/30 rounded-xl font-semibold hover:bg-white/20">
+                    Book with {{ article.developer.user.full_name.split()[0] }}
+                </a>
+            </div>
+        </div>
+
+        <!-- Related Articles -->
+        {% if related %}
+        <div class="mb-8">
+            <h3 class="text-2xl font-bold mb-6">Related Articles</h3>
+            <div class="grid md:grid-cols-3 gap-6">
+                {% for r in related %}
+                <a href="{{ url_for('articles.article_detail', slug=r.slug) }}" class="article-card block">
+                    <img src="{{ r.get_cover_url() }}" class="w-full h-32 object-cover">
+                    <div class="p-4">
+                        <h4 class="font-semibold line-clamp-2">{{ r.title }}</h4>
+                    </div>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</article>
+{% endblock %}

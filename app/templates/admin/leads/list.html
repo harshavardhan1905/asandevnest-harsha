@@ -1,0 +1,117 @@
+{% extends "dashboard_base.html" %}
+
+{% block role_label %}Admin Panel{% endblock %}
+
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg>
+    <span>Core Admin</span>
+</a>
+
+<div class="px-4 py-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Leads & Projects</div>
+
+<a href="{{ url_for('admin_leads.dashboard') }}" class="sidebar-link">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
+        </path>
+    </svg>
+    <span>Lead Dashboard</span>
+</a>
+
+<a href="{{ url_for('admin_leads.lead_list') }}" class="sidebar-link active">
+    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+        </path>
+    </svg>
+    <span>Manage Leads</span>
+</a>
+{% endblock %}
+
+{% block page_title %}Manage Student Leads{% endblock %}
+{% block page_subtitle %}Track inquiries and follow-ups{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-wrap gap-4 items-center justify-between">
+    <div class="flex gap-4">
+        <a href="{{ url_for('admin_leads.export_leads') }}"
+            class="btn bg-white border border-slate-200 hover:bg-slate-50 text-slate-600 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+            </svg>
+            Export CSV
+        </a>
+        <a href="{{ url_for('admin_leads.add_lead') }}" class="btn btn-primary">+ Add New Lead</a>
+        <div class="flex items-center gap-2">
+            <select class="px-4 py-2 rounded-xl border border-slate-200 text-sm outline-none bg-white"
+                onchange="window.location.href='?status=' + this.value">
+                <option value="">All Statuses</option>
+                <option value="New Lead">New Lead</option>
+                <option value="Follow-up">Follow-up</option>
+                <option value="Interested">Interested</option>
+                <option value="Confirmed">Confirmed</option>
+                <option value="Dropped">Dropped</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+<div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Student Name</th>
+                <th>Contact</th>
+                <th>Domain / College</th>
+                <th>Status</th>
+                <th>Added On</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for lead in leads %}
+            <tr>
+                <td>
+                    <div class="font-medium text-slate-800">{{ lead.student_name }}</div>
+                    <div class="text-xs text-slate-400">Source: {{ lead.source }}</div>
+                </td>
+                <td>
+                    <div class="text-sm text-slate-600">{{ lead.phone }}</div>
+                    <div class="text-xs text-slate-400">{{ lead.email or 'No email' }}</div>
+                </td>
+                <td>
+                    <div class="text-sm text-slate-800 font-medium">{{ lead.domain }}</div>
+                    <div class="text-xs text-slate-500 line-clamp-1">{{ lead.college }}</div>
+                </td>
+                <td>
+                    <span class="badge 
+                        {% if lead.status == 'New Lead' %}badge-blue
+                        {% elif lead.status == 'Confirmed' %}badge-success
+                        {% elif lead.status == 'Dropped' %}badge-danger
+                        {% else %}badge-warning{% endif %}">
+                        {{ lead.status }}
+                    </span>
+                </td>
+                <td class="text-sm text-slate-500">{{ lead.created_at.strftime('%b %d, %Y') }}</td>
+                <td>
+                    <a href="{{ url_for('admin_leads.lead_detail', lead_id=lead.id) }}"
+                        class="text-primary-600 hover:text-primary-700 font-medium text-sm">Details</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" class="text-center py-12 text-slate-500">
+                    <p>No leads found matching your criteria.</p>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

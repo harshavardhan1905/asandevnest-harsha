@@ -1,0 +1,179 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}{{ team.name }}{% endblock %}
+{% block page_subtitle %}Team Management{% endblock %}
+
+{% block content %}
+<div class="grid md:grid-cols-3 gap-6">
+    <div class="md:col-span-2 space-y-6">
+        <!-- Team Info -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-lg font-semibold">Team Information</h3>
+                <span class="{{ team.get_status_badge_class() }} badge">{{ team.status|title }}</span>
+            </div>
+
+            {% if team.description %}
+            <p class="text-slate-700 mb-4">{{ team.description }}</p>
+            {% endif %}
+
+            <div class="grid md:grid-cols-2 gap-4">
+                <div>
+                    <label class="text-sm text-slate-500">Team Lead</label>
+                    <p class="font-medium">{{ team.lead_developer.user.full_name if team.lead_developer else 'Not
+                        assigned' }}</p>
+                </div>
+                {% if team.project %}
+                <div>
+                    <label class="text-sm text-slate-500">Project</label>
+                    <p class="font-medium">{{ team.project.title }}</p>
+                </div>
+                {% endif %}
+                <div>
+                    <label class="text-sm text-slate-500">Created</label>
+                    <p class="font-medium">{{ team.created_at.strftime('%b %d, %Y') }}</p>
+                </div>
+                {% if team.deadline %}
+                <div>
+                    <label class="text-sm text-slate-500">Deadline</label>
+                    <p class="font-medium">{{ team.deadline.strftime('%b %d, %Y') }}</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Team Members -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Team Members ({{ team.members.count() }})</h3>
+
+            {% if team.members %}
+            <div class="space-y-3">
+                {% for member in team.members %}
+                <div class="flex items-center justify-between p-4 border rounded-lg">
+                    <div class="flex items-center gap-3">
+                        <img src="{{ member.developer.user.get_avatar_url() }}"
+                            alt="{{ member.developer.user.full_name }}" class="w-12 h-12 rounded-full">
+                        <div>
+                            <p class="font-medium">{{ member.developer.user.full_name }}</p>
+                            <p class="text-sm text-slate-500">{{ member.role or 'Team Member' }}</p>
+                            <p class="text-xs text-slate-400">Joined {{ member.joined_at.strftime('%b %d, %Y') }}</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        {% if member.is_lead %}
+                        <span class="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs">Lead</span>
+                        {% endif %}
+                        <form method="POST"
+                            action="{{ url_for('admin.remove_team_member', team_id=team.id, member_id=member.id) }}"
+                            class="inline">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <button type="submit" class="text-red-600 hover:underline text-sm"
+                                onclick="return confirm('Remove this member?')">Remove</button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p class="text-slate-500 text-center py-4">No members yet</p>
+            {% endif %}
+        </div>
+
+        <!-- Add Member -->
+        <div class="bg-white rounded-2xl p-6 shadow-sm border">
+            <h3 class="text-lg font-semibold mb-4">Add Team Member</h3>
+            <form method="POST" action="{{ url_for('admin.add_team_member', team_id=team.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="grid md:grid-cols-3 gap-4">
+                    <div class="md:col-span-2">
+                        <select name="developer_id" required class="form-input">
+                            <option value="">Select developer</option>
+                            {% for dev in available_developers %}
+                            <option value="{{ dev.id }}">{{ dev.user.full_name }} - {{ dev.title or 'Developer' }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn-primary">Add Member</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Actions Sidebar -->
+    <div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border sticky top-6">
+            <h3 class="text-lg font-semibold mb-4">Actions</h3>
+
+            {% if team.status == 'forming' and team.members.count() > 0 %}
+            <form method="POST" action="{{ url_for('admin.start_team', team_id=team.id) }}" class="mb-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="w-full btn-primary">Start Team</button>
+            </form>
+            {% endif %}
+
+            {% if team.status == 'active' %}
+            <form method="POST" action="{{ url_for('admin.complete_team', team_id=team.id) }}" class="mb-3">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="w-full px-4 py-2 bg-green-600 text-white rounded-lg font-medium hover:bg-green-700">Mark
+                    Complete</button>
+            </form>
+            {% endif %}
+
+            <a href="{{ url_for('admin.teams') }}" class="w-full btn-secondary">← Back to Teams</a>
+
+            {% if team.project %}
+            <div class="mt-6 pt-6 border-t">
+                <a href="{{ url_for('admin.project_detail', project_id=team.project.id) }}"
+                    class="text-primary-600 hover:underline text-sm">View Project →</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

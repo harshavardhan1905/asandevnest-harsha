@@ -1,0 +1,143 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Client Dashboard{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('client.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('client.profile') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+    </svg><span>Profile</span></a>
+<a href="{{ url_for('client.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('client.appointments') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    </svg><span>Appointments</span></a>
+{% endblock %}
+
+{% block page_title %}My Appointments{% endblock %}
+{% block page_subtitle %}Manage your meetings with developers{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div class="flex gap-2">
+        <a href="{{ url_for('client.appointments') }}"
+            class="px-4 py-2 rounded-lg {% if not current_status %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            All
+        </a>
+        <a href="{{ url_for('client.appointments', status='pending') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'pending' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Pending
+        </a>
+        <a href="{{ url_for('client.appointments', status='confirmed') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'confirmed' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Confirmed
+        </a>
+        <a href="{{ url_for('client.appointments', status='completed') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'completed' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600 hover:bg-slate-200{% endif %}">
+            Completed
+        </a>
+    </div>
+
+    <a href="{{ url_for('main.developers_list') }}" class="btn-primary">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Book New Appointment
+    </a>
+</div>
+
+{% if appointments %}
+<div class="grid gap-6">
+    {% for appointment in appointments %}
+    <div class="bg-white rounded-2xl p-6 shadow-sm border">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex items-start gap-4 flex-1">
+                <img src="{{ appointment.developer.user.get_avatar_url() }}"
+                    alt="{{ appointment.developer.user.full_name }}" class="w-12 h-12 rounded-full">
+                <div class="flex-1">
+                    <div class="flex items-center gap-3 mb-2">
+                        <h3 class="text-lg font-semibold">{{ appointment.developer.user.full_name }}</h3>
+                        <span class="{{ appointment.get_status_badge_class() }} badge">{{ appointment.status|title
+                            }}</span>
+                    </div>
+
+                    <p class="text-slate-600 text-sm mb-3">{{ appointment.purpose }}</p>
+
+                    <div class="grid md:grid-cols-3 gap-4 text-sm">
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            <span>{{ appointment.scheduled_at.strftime('%b %d, %Y') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ appointment.scheduled_at.strftime('%I:%M %p') }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                            <span>{{ appointment.duration_minutes }} min</span>
+                        </div>
+                    </div>
+
+                    {% if appointment.meeting_link %}
+                    <div class="mt-3">
+                        <a href="{{ appointment.meeting_link }}" target="_blank"
+                            class="inline-flex items-center gap-2 text-primary-600 hover:underline text-sm">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z">
+                                </path>
+                            </svg>
+                            Join Meeting
+                        </a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex gap-3 pt-4 border-t">
+            {% if appointment.status == 'pending' %}
+            <form method="POST" action="{{ url_for('client.cancel_appointment', id=appointment.id) }}" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="text-red-600 hover:underline text-sm"
+                    onclick="return confirm('Cancel this appointment?')">Cancel</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% else %}
+<div class="bg-white rounded-2xl p-12 text-center border">
+    <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    </svg>
+    <h3 class="text-xl font-semibold mb-2">No Appointments Yet</h3>
+    <p class="text-slate-500 mb-4">Book a meeting with a developer to get started</p>
+    <a href="{{ url_for('main.developers_list') }}" class="btn-primary inline-block">Browse Developers</a>
+</div>
+{% endif %}
+{% endblock %}

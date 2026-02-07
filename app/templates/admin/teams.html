@@ -1,0 +1,182 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+{% endblock %}
+
+{% block page_title %}Team Management{% endblock %}
+{% block page_subtitle %}Create and manage development teams{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div class="flex gap-2">
+        <a href="{{ url_for('admin.teams') }}"
+            class="px-4 py-2 rounded-lg {% if not current_status %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">All</a>
+        <a href="{{ url_for('admin.teams', status='forming') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'forming' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Forming</a>
+        <a href="{{ url_for('admin.teams', status='active') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'active' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Active</a>
+        <a href="{{ url_for('admin.teams', status='completed') }}"
+            class="px-4 py-2 rounded-lg {% if current_status == 'completed' %}bg-primary-500 text-white{% else %}bg-slate-100 text-slate-600{% endif %}">Completed</a>
+    </div>
+
+    <a href="{{ url_for('admin.create_team') }}" class="btn-primary">
+        <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+        </svg>
+        Create Team
+    </a>
+</div>
+
+{% if teams.items %}
+<div class="grid gap-6">
+    {% for team in teams.items %}
+    <div class="bg-white rounded-2xl p-6 shadow-sm border">
+        <div class="flex items-start justify-between mb-4">
+            <div class="flex-1">
+                <div class="flex items-center gap-3 mb-2">
+                    <h3 class="text-lg font-semibold">{{ team.name }}</h3>
+                    <span class="{{ team.get_status_badge_class() }} badge">{{ team.status|title }}</span>
+                </div>
+
+                {% if team.description %}
+                <p class="text-slate-600 text-sm mb-3">{{ team.description }}</p>
+                {% endif %}
+
+                <div class="grid md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <label class="text-slate-500">Team Lead</label>
+                        <p class="font-medium">{{ team.lead_developer.user.full_name if team.lead_developer else 'Not
+                            assigned' }}</p>
+                    </div>
+
+                    {% if team.project %}
+                    <div>
+                        <label class="text-slate-500">Project</label>
+                        <p class="font-medium">{{ team.project.title }}</p>
+                    </div>
+                    {% endif %}
+
+                    <div>
+                        <label class="text-slate-500">Members</label>
+                        <p class="font-medium">{{ team.members.count() }} developers</p>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-6 text-sm text-slate-500 mt-3">
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                            </path>
+                        </svg>
+                        <span>Created {{ team.created_at.strftime('%b %d, %Y') }}</span>
+                    </div>
+
+                    {% if team.started_at %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z">
+                            </path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Started {{ team.started_at.strftime('%b %d, %Y') }}</span>
+                    </div>
+                    {% endif %}
+
+                    {% if team.deadline %}
+                    <div class="flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <span>Deadline {{ team.deadline.strftime('%b %d, %Y') }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="flex gap-3 pt-4 border-t">
+            <a href="{{ url_for('admin.team_detail', team_id=team.id) }}" class="btn-secondary text-sm px-4 py-2">Manage
+                Team</a>
+
+            {% if team.status == 'forming' and team.members.count() > 0 %}
+            <form method="POST" action="{{ url_for('admin.start_team', team_id=team.id) }}" class="inline">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit"
+                    class="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700">Start
+                    Team</button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% if teams.pages > 1 %}
+<div class="pagination mt-6">
+    {% for page in teams.iter_pages() %}
+    {% if page %}
+    {% if page == teams.page %}<span class="current">{{ page }}</span>
+    {% else %}<a href="{{ url_for('admin.teams', page=page, status=current_status) }}">{{ page }}</a>{% endif %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="bg-white rounded-2xl p-12 text-center border">
+    <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M9 20H4v-2a3 3 0 015.356-1.857M9 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+        </path>
+    </svg>
+    <h3 class="text-xl font-semibold mb-2">No teams found</h3>
+    <p class="text-slate-500 mb-4">Create teams to assign developers to projects</p>
+    <a href="{{ url_for('admin.create_team') }}" class="btn-primary inline-block">Create First Team</a>
+</div>
+{% endif %}
+{% endblock %}

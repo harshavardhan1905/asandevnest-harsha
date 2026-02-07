@@ -1,0 +1,177 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Admin Panel{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('admin.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('admin.developers') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z">
+        </path>
+    </svg><span>Developers</span></a>
+<a href="{{ url_for('admin.kyc_list') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z">
+        </path>
+    </svg><span>KYC Verification</span></a>
+<a href="{{ url_for('admin.articles') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+        </path>
+    </svg><span>Articles</span></a>
+<a href="{{ url_for('admin.projects') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10">
+        </path>
+    </svg><span>Projects</span></a>
+<a href="{{ url_for('admin.teams') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857"></path>
+    </svg><span>Teams</span></a>
+<a href="{{ url_for('admin.clients') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none" stroke="currentColor"
+        viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+        </path>
+    </svg><span>Clients</span></a>
+<a href="{{ url_for('admin.appointments') }}" class="sidebar-link active"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+        </path>
+    </svg><span>Appointments</span></a>
+{% endblock %}
+
+{% block page_title %}Appointment Management{% endblock %}
+{% block page_subtitle %}Manage sessions between clients and developers{% endblock %}
+
+{% block content %}
+<div class="flex justify-between items-center mb-6">
+    <div class="flex gap-3">
+        <select id="statusFilter" class="form-select" onchange="filterAppointments()">
+            <option value="" {% if not current_status %}selected{% endif %}>All Status</option>
+            <option value="pending" {% if current_status=='pending' %}selected{% endif %}>Pending</option>
+            <option value="confirmed" {% if current_status=='confirmed' %}selected{% endif %}>Confirmed</option>
+            <option value="in_progress" {% if current_status=='in_progress' %}selected{% endif %}>In Progress</option>
+            <option value="completed" {% if current_status=='completed' %}selected{% endif %}>Completed</option>
+            <option value="cancelled" {% if current_status=='cancelled' %}selected{% endif %}>Cancelled</option>
+        </select>
+    </div>
+</div>
+
+{% if appointments.items %}
+<div class="bg-white rounded-2xl shadow-sm border overflow-hidden">
+    <table class="data-table">
+        <thead>
+            <tr>
+                <th>Appointment</th>
+                <th>Client</th>
+                <th>Developer</th>
+                <th>Scheduled At</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for appointment in appointments.items %}
+            <tr>
+                <td>
+                    <div class="font-medium text-slate-900">{{ appointment.title or appointment.get_type_display() }}
+                    </div>
+                    <div class="text-xs text-slate-500">{{ appointment.duration_minutes }} mins</div>
+                </td>
+                <td>
+                    {% if appointment.client and appointment.client.user %}
+                    <div class="flex items-center gap-2">
+                        <img src="{{ appointment.client.user.get_avatar_url() }}" class="w-7 h-7 rounded-full">
+                        <div class="text-sm">
+                            <div class="font-medium">{{ appointment.client.user.full_name }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <span class="text-slate-400">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if appointment.developer and appointment.developer.user %}
+                    <div class="flex items-center gap-2">
+                        <img src="{{ appointment.developer.user.get_avatar_url() }}" class="w-7 h-7 rounded-full">
+                        <div class="text-sm">
+                            <div class="font-medium">{{ appointment.developer.user.full_name }}</div>
+                        </div>
+                    </div>
+                    {% else %}
+                    <span class="text-slate-400">N/A</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div class="text-sm">
+                        <div class="font-medium">{{ appointment.scheduled_at.strftime('%b %d, %Y') }}</div>
+                        <div class="text-slate-500">{{ appointment.scheduled_at.strftime('%I:%M %p') }}</div>
+                    </div>
+                </td>
+                <td>
+                    <span class="px-2 py-1 rounded-full text-xs font-medium {{ appointment.get_status_badge_class() }}">
+                        {{ appointment.status|title }}
+                    </span>
+                </td>
+                <td>
+                    <div class="flex gap-2 text-sm">
+                        {% if appointment.meeting_link %}
+                        <a href="{{ appointment.meeting_link }}" target="_blank"
+                            class="text-blue-600 hover:underline">Join</a>
+                        {% endif %}
+                        <a href="{{ url_for('admin.client_detail', user_id=appointment.client.user.id) if appointment.client and appointment.client.user else '#' }}"
+                            class="text-primary-600 hover:underline">Details</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if appointments.pages > 1 %}
+<div class="pagination mt-6">
+    {% for page in appointments.iter_pages() %}
+    {% if page %}
+    {% if page == appointments.page %}<span class="current">{{ page }}</span>
+    {% else %}<a href="{{ url_for('admin.appointments', page=page, status=current_status) }}">{{ page }}</a>{% endif %}
+    {% endif %}
+    {% endfor %}
+</div>
+{% endif %}
+
+{% else %}
+<div class="bg-white rounded-2xl p-12 text-center border">
+    <svg class="w-16 h-16 text-slate-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+        </path>
+    </svg>
+    <h3 class="text-xl font-semibold mb-2">No appointments found</h3>
+    <p class="text-slate-500">
+        {% if current_status %}
+        No appointments found with status {{ current_status }}
+        {% else %}
+        Appointments will appear here when clients book sessions
+        {% endif %}
+    </p>
+</div>
+{% endif %}
+
+<script>
+    function filterAppointments() {
+        const status = document.getElementById('statusFilter').value;
+        window.location.href = "{{ url_for('admin.appointments') }}?status=" + encodeURIComponent(status);
+    }
+</script>
+{% endblock %}

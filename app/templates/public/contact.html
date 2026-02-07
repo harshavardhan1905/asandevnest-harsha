@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block title %}Contact{% endblock %}
+{% block content %}
+<section class="py-20">
+    <div class="max-w-4xl mx-auto px-4">
+        <div class="text-center mb-12">
+            <h1 class="text-4xl font-bold mb-4">Contact Us</h1>
+            <p class="text-xl text-slate-600">Have questions? We'd love to hear from you.</p>
+        </div>
+        <div class="bg-white rounded-2xl shadow-xl p-8">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <h2 class="text-2xl font-semibold mb-6">Get in Touch</h2>
+                    <div class="space-y-4">
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-primary-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium">Email</div>
+                                <div class="text-slate-500">hello@asandevnest.com</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            <div class="w-12 h-12 bg-cyan-100 rounded-xl flex items-center justify-center">
+                                <svg class="w-6 h-6 text-cyan-600" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="font-medium">Location</div>
+                                <div class="text-slate-500">India</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <form class="space-y-4">
+                        <input type="text" placeholder="Your Name" class="form-input">
+                        <input type="email" placeholder="Your Email" class="form-input">
+                        <textarea rows="4" placeholder="Your Message" class="form-input"></textarea>
+                        <button type="submit" class="btn-primary w-full">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

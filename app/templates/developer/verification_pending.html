@@ -1,0 +1,51 @@
+{% extends "dashboard_base.html" %}
+{% block role_label %}Developer Portal{% endblock %}
+{% block sidebar %}
+<a href="{{ url_for('developer.dashboard') }}" class="sidebar-link"><svg class="w-5 h-5" fill="none"
+        stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6">
+        </path>
+    </svg><span>Dashboard</span></a>
+<a href="{{ url_for('developer.kyc') }}" class="sidebar-link active bg-amber-500/20 text-amber-400"><svg class="w-5 h-5"
+        fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+    </svg><span>Verification Pending</span></a>
+{% endblock %}
+
+{% block page_title %}Verification Pending{% endblock %}
+{% block page_subtitle %}Your account is awaiting verification{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto text-center">
+    <div class="bg-white rounded-2xl p-12 shadow-sm border">
+        <div class="w-20 h-20 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-6">
+            <svg class="w-10 h-10 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+        </div>
+        <h2 class="text-2xl font-bold mb-4">Verification In Progress</h2>
+        <p class="text-slate-600 mb-8">Our team is reviewing your submitted documents. This typically takes 24-48 hours.
+        </p>
+
+        {% if kyc_docs %}
+        <div class="text-left bg-slate-50 rounded-xl p-6 mb-6">
+            <h3 class="font-medium mb-4">Submitted Documents</h3>
+            {% for doc in kyc_docs %}
+            <div class="flex items-center justify-between py-2 border-b last:border-0">
+                <span>{{ doc.get_document_type_display() }}</span>
+                <span class="{{ doc.get_status_badge_class() }} badge">{{ doc.status|title }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <div class="flex gap-4 justify-center">
+            <a href="{{ url_for('developer.kyc') }}" class="btn-secondary">Submit Another Document</a>
+            <a href="{{ url_for('developer.dashboard') }}" class="btn-primary">Go to Dashboard</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
