@@ -19,7 +19,9 @@ def create_app(config_class=None):
     app = Flask(__name__)
     
     # Configuration
-    database_url = os.environ.get('DATABASE_URL', 'sqlite:///asan_devnest.db')
+    # database_url = os.environ.get('DATABASE_URL', 'sqlite:///asan_devnest.db')
+    mysql_uri = 'mysql+pymysql://dbmasteruser:Sales1221.@ls-b9e1fff8ae66188406492f1b8709a5557d98a493.cvq4mo8ooiu8.ap-south-1.rds.amazonaws.com/asandevnest'
+    database_url = os.environ.get('DATABASE_URL', mysql_uri)
     if database_url and database_url.startswith('postgres://'):
         database_url = database_url.replace('postgres://', 'postgresql://', 1)
         
